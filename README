@@ -1,7 +1,12 @@
+Clone the directory and from within it, run:
+
+$ python marginalized_tsz_from_TS+P18CM_analysis.py
+
+
 The 'Marginalized TSZ' points (black dots with error bars) are obtained by
 subtracting the foreground residuals from the y-map power spectrum measurement.
 
-In Figure 12, we chose to subtract the foreground as obtained in the TSZ-only analysis:
+In Figure 12, we chose to subtract the foreground as obtained in the TSZ-only analysis (default):
 TSZ only ACIB: 7.54722e-02 +/- 5.99398e-02
 TSZ only AIR: 1.80183e+00 +/- 4.03783e-01
 TSZ only ARS: 2.13806e-01 +/- 1.96956e-01
@@ -10,8 +15,11 @@ One could chose to subtract the foreground as obtained in the TSZ+Planck analysi
 TSZ+P18CMB ACIB: 4.5620e-02 +/- 2.8713e-02
 TSZ+P18CMB AIR: 1.5310e+00 +/- 1.0807e-01
 TSZ+P18CMB ARS: 1.8398e-01 +/- 1.0711e-01
+to chose this option, run:
 
-It is possible to compare the high-ell measurements with recent ACT and SPT points.
+$ python marginalized_tsz_from_TS+P18CM_analysis.py -fg_from_P18CMB yes
+
+Here we also compare with the high-ell measurements with recent ACT and SPT points.
 These are given by:
 
 ACT result from Choi et al 2020 (https://arxiv.org/pdf/2007.07289.pdf)
@@ -19,10 +27,12 @@ They report a tSZ power result at 150 GHz, where g(nu) = -0.957
 ACTCellnew = 5.29/(2.67)**2
 ACTCellnewerr =	0.66/(2.67)**2
 
+
 SPT result from Reichardt et al 2020 (https://arxiv.org/pdf/2002.06197.pdf)
 They report a tSZ power result at 143 GHz, where g(nu) = -1.044
 SPTCellnew = 3.42/(2.84)**2
 SPTCellnewerr = 0.54/(2.84)**2
+
 
 The denominator comes from the conversion to dimensionless y-units,
 i.e., dividing by Tcmb*g(nu).
@@ -63,7 +73,7 @@ contains the best-fitting TSZ power spectrum, columns are as indicated at the en
 the spectra are 10^12*l*(l+1)/2pi*cl's in dimensionless DT/T units, for 1-halo, 2-halo and the sum,
 from l=2 to 40,000.
 
-Finally, we provide a python script that produces the figure from all these data files.
+We provide a python script that produces the figure from all these data files.
 You can obtain a version of the figure by running:
-$ python solike/ymap/run_scripts/marginalized_tsz_from_TS+P18CM_analysis.py
-in a Terminal. 
+$ python marginalized_tsz_from_TS+P18CM_analysis.py
+in a Terminal.

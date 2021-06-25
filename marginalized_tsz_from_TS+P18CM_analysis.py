@@ -1,22 +1,27 @@
 # This is the script for final figure with best-fit
 # run with:
-# $ python solike/ymap/run_scripts/marginalized_tsz_from_TS+P18CM_analysis.py
+# $ python smarginalized_tsz_from_TS+P18CM_analysis.py
 import os
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import pathlib
 
 
 
 
 
-path_to_files = '/Users/boris/Work/CLASS-SZ/SO-SZ/TopoSZ/fig12 data/'
 
+path_to_files = str(pathlib.Path(__file__).parent.resolve())+'/'
 
 
 def run(args):
 
-    D = np.loadtxt(path_to_files+'szpowespectrum_measurement_urc_snr6_p18cmb_bf_fg_from_TSZ+P18_l_clyy_sigclyy_cib_ir_rs_cn.txt')
+    if args.fg_from_P18CMB is not None:
+        D = np.loadtxt(path_to_files+'szpowespectrum_measurement_urc_snr6_p18cmb_bf_fg_from_TSZ+P18_l_clyy_sigclyy_cib_ir_rs_cn.txt')
+    else:
+        D = np.loadtxt(path_to_files+'szpowespectrum_measurement_urc_snr6_p18cmb_bf_fg_from_TSZonly_l_clyy_sigclyy_cib_ir_rs_cn.txt')
+
     multipoles = D[:,0]
     marg_sz = D[:,1]
     marg_sz_yerr = D[:,2]
@@ -92,9 +97,16 @@ def run(args):
 
 
     P = np.loadtxt(path_to_files+'planck_sz_1712_00788v1.txt')
-    ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,2][0:18],color='green',linestyle="None",alpha = .2,label = 'B18',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,2][0:18],color='green',linestyle="None",alpha = .5,label = 'B18',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
     ax.fill_between(P[:,0][0:18],P[:,1][0:18]-P[:,2][0:18],P[:,1][0:18]+P[:,2][0:18],
     color='green',alpha=0.1,label=r'1-$\sigma$ interval from Bolliet et al. (2018)')
+
+    P = np.loadtxt(path_to_files+'Planck2015.txt')
+    ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,4][0:18],color='purple',linestyle="None",alpha = .2,label = 'P15',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    ax.fill_between(P[:,0][0:18],P[:,1][0:18]-P[:,4][0:18],P[:,1][0:18]+P[:,4][0:18],
+    color='purple',alpha=0.1,label=r'1-$\sigma$ interval from Planck (2015)')
+
+
     ax.set_ylim(y_min,y_max)
     ax.legend(loc=2,ncol=1,fontsize=10,frameon=False)
 
@@ -128,6 +140,7 @@ def run(args):
 
 def main():
     parser=argparse.ArgumentParser(description="plotting results")
+    parser.add_argument("-fg_from_P18CMB",help="fg_from_P18CMB" ,dest="fg_from_P18CMB", type=str, required=False)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)
