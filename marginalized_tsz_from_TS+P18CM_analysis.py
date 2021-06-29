@@ -6,9 +6,26 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import pathlib
+from scipy.interpolate import interp1d
 
 
+TCMB = 2.726 #Kelvin
+TCMB_uK = 2.726e6 #micro-Kelvin
 
+
+hplanck=6.626068e-34 #MKS
+kboltz=1.3806503e-23 #MKS
+clight=299792458.0 #MKS
+m_elec = 510.999 #keV
+
+
+# tsz function
+def fsz(nu_ghz):
+    nu = 1.e9*np.asarray(nu_ghz).astype(float)
+    X = hplanck*nu/(kboltz*TCMB)
+    resp = (X / np.tanh(X/2.0) - 4.0) * TCMB_uK #put explicitly into uK_CMB units, so that output ILC map is in Compton-y
+#     resp[np.where(nu_ghz == None)] = 0. #this case is appropriate for HI or other maps that contain no CMB-relevant signals (and also no CIB); they're assumed to be denoted by None in nu_ghz
+    return resp
 
 
 
@@ -16,6 +33,9 @@ path_to_files = str(pathlib.Path(__file__).parent.resolve())+'/'
 
 
 def run(args):
+    #
+
+
 
     if args.fg_from_P18CMB is not None:
         D = np.loadtxt(path_to_files+'szpowespectrum_measurement_urc_snr6_p18cmb_bf_fg_from_TSZ+P18_l_clyy_sigclyy_cib_ir_rs_cn.txt')
@@ -59,6 +79,33 @@ def run(args):
     ax.set_xlabel(r'$\ell$',size=title_size)
 
     ax.set_ylabel(r'$10^{12}\ell(\ell+1)\mathrm{C^{yy}_\ell/2\pi}$',size=title_size)
+
+
+    if args.SZ_from_templates is not None:
+        PSZ = np.loadtxt(path_to_files+'tsz_143_eps0.50.dat')
+        B12 = np.loadtxt(path_to_files+'cl_tsz_150_bat.dat')
+
+        pow_planck = interp1d(PSZ[:,0],PSZ[:,1])
+        tsz_planck = PSZ[:,1]
+        tsz_planck = 1e12*tsz_planck/fsz(143)/fsz(143)/pow_planck(3000)
+        A_sz_planck_mean = 5.
+        A_sz_planck_sigma = 2.
+        A_sz_planck_best_fit = 7.
+
+        plt.plot(PSZ[:,0],A_sz_planck_best_fit*tsz_planck,label='P15',marker='o',markersize=1.,c='k')
+        plt.fill_between(PSZ[:,0],(A_sz_planck_mean-A_sz_planck_sigma)*tsz_planck,(A_sz_planck_mean+A_sz_planck_sigma)*tsz_planck)
+
+
+        tsz_B12 = B12[:,1]
+        pow_b12 = interp1d(B12[:,0],tsz_B12)
+        tsz_B12 = 1e12*tsz_B12/pow_b12(3000)/fsz(150)/fsz(150)
+        A_sz_act_mean = 5.29
+        A_sz_act_sigma = 0.66
+        A_sz_act_best_fit = 5.29
+
+        plt.plot(B12[:,0][600:],A_sz_act_best_fit*tsz_B12[600:],label='B12',marker='o',markersize=1.,c='r')
+        plt.fill_between(B12[:,0][600:],(A_sz_act_mean-A_sz_act_sigma)*tsz_B12[600:],(A_sz_act_mean+A_sz_act_sigma)*tsz_B12[600:])
+
 
 
 
@@ -141,6 +188,7 @@ def run(args):
 def main():
     parser=argparse.ArgumentParser(description="plotting results")
     parser.add_argument("-fg_from_P18CMB",help="fg_from_P18CMB" ,dest="fg_from_P18CMB", type=str, required=False)
+    parser.add_argument("-SZ_from_templates",help="SZ_from_templates" ,dest="SZ_from_templates", type=str, required=False)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)
