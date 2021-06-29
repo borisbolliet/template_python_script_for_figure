@@ -92,8 +92,8 @@ def run(args):
         A_sz_planck_sigma = 2.
         A_sz_planck_best_fit = 7.
 
-        plt.plot(PSZ[:,0],A_sz_planck_best_fit*tsz_planck,label='P15',marker='o',markersize=1.,c='k')
-        plt.fill_between(PSZ[:,0],(A_sz_planck_mean-A_sz_planck_sigma)*tsz_planck,(A_sz_planck_mean+A_sz_planck_sigma)*tsz_planck)
+        plt.plot(PSZ[:,0],A_sz_planck_best_fit*tsz_planck,label='P15 MFLIKE best-fit',c='k',ls=':')
+        plt.fill_between(PSZ[:,0],(A_sz_planck_mean-A_sz_planck_sigma)*tsz_planck,(A_sz_planck_mean+A_sz_planck_sigma)*tsz_planck,alpha=0.3)
 
 
         tsz_B12 = B12[:,1]
@@ -103,8 +103,8 @@ def run(args):
         A_sz_act_sigma = 0.66
         A_sz_act_best_fit = 5.29
 
-        plt.plot(B12[:,0][600:],A_sz_act_best_fit*tsz_B12[600:],label='B12',marker='o',markersize=1.,c='r')
-        plt.fill_between(B12[:,0][600:],(A_sz_act_mean-A_sz_act_sigma)*tsz_B12[600:],(A_sz_act_mean+A_sz_act_sigma)*tsz_B12[600:])
+        plt.plot(B12[:,0][600:],A_sz_act_best_fit*tsz_B12[600:],label='ACT MFLIKE best-fit',c='r',ls='--')
+        plt.fill_between(B12[:,0][600:],(A_sz_act_mean-A_sz_act_sigma)*tsz_B12[600:],(A_sz_act_mean+A_sz_act_sigma)*tsz_B12[600:],alpha=0.3)
 
 
 
@@ -119,7 +119,7 @@ def run(args):
     ax.plot(multipoles,Cl_rs,color='b',ls=':',alpha = .5)
     cn, = ax.plot(multipoles,Cl_cn,color='b',ls=':',alpha = .7)
     cn.set_dashes([4, 2, 1, 2, 1, 2])
-    ax.errorbar(multipoles,marg_sz,yerr=[marg_sz_yerr,marg_sz_yerr],color='k',ls='None',alpha = 1.,label = r'Marginalized TSZ [uRC, $q_\mathrm{cut}=6$]',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    ax.errorbar(multipoles,marg_sz,yerr=[marg_sz_yerr,marg_sz_yerr],color='k',ls='None',alpha = 1.,label = r'R21 [uRC, $q_\mathrm{cut}=6$]',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
 
 
 
@@ -136,22 +136,24 @@ def run(args):
     ax.errorbar([3000],[ACTCellnew],
                 yerr=[ACTCellnewerr],capthick=1,capsize=3,elinewidth=2,\
                  fmt='<',mfc='k',markersize=8,color = 'r',zorder=100)
-    ax.text(3.9e3, 4.2e-1, 'SPT (2020)', fontsize=9,rotation = 0,
+    ax.text(3.1e3, 3.e-1, 'SPT (2020)', fontsize=9,rotation = 0,
     verticalalignment='center',horizontalalignment='left')
-    ax.text(3.9e3, 7e-1, 'ACT (2020)', fontsize=9,rotation = 0,
+    ax.text(3.1e3, 1.05e0, 'ACT (2020)', fontsize=9,rotation = 0,
     verticalalignment='center',horizontalalignment='left')
 
 
 
     P = np.loadtxt(path_to_files+'planck_sz_1712_00788v1.txt')
-    ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,2][0:18],color='green',linestyle="None",alpha = .5,label = 'B18',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    # ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,2][0:18],color='green',linestyle="None",alpha = .5,label = 'B18',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    ax.plot(P[:,0][0:18],P[:,1][0:18],color='green',linestyle="None",alpha = .5,label = 'B18',marker='o',markersize=3,markeredgewidth=2)
     ax.fill_between(P[:,0][0:18],P[:,1][0:18]-P[:,2][0:18],P[:,1][0:18]+P[:,2][0:18],
-    color='green',alpha=0.1,label=r'1-$\sigma$ interval from Bolliet et al. (2018)')
+    color='green',alpha=0.1,label=r'1-$\sigma$ B18')
 
     P = np.loadtxt(path_to_files+'Planck2015.txt')
-    ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,4][0:18],color='purple',linestyle="None",alpha = .2,label = 'P15',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    # ax.errorbar(P[:,0][0:18],P[:,1][0:18],yerr = P[:,4][0:18],color='purple',linestyle="None",alpha = .2,label = 'P15',marker='o',markersize=3,capsize=5,elinewidth=2,markeredgewidth=2)
+    ax.plot(P[:,0][0:18],P[:,1][0:18],color='purple',linestyle="None",alpha = .2,label = 'P15',marker='o',markersize=3,markeredgewidth=2)
     ax.fill_between(P[:,0][0:18],P[:,1][0:18]-P[:,4][0:18],P[:,1][0:18]+P[:,4][0:18],
-    color='purple',alpha=0.1,label=r'1-$\sigma$ interval from Planck (2015)')
+    color='purple',alpha=0.1,label=r'1-$\sigma$ P15')
 
 
     ax.set_ylim(y_min,y_max)
